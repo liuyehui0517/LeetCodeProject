@@ -134,11 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Person.cpp" />
     <ClCompile Include="源.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Person.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
