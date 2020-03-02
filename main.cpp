@@ -1,21 +1,26 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <list>
-#include <deque>
-#include <array>
-#include <forward_list>
-#include <algorithm>
 using namespace std;
+
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib> 
+#include <crtdbg.h>
+#ifdef _DEBUG
+	#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#else
+	#define DBG_NEW new
+#endif
+
+#ifdef __GNUC__
+#pragma GCC optimize(2)
+#pragma G++ optimize(2) 
+#endif
 
 int main()
 {
-	std::numeric_limits<int>::epsilon();
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	cin.sync_with_stdio(false);
 	cout.sync_with_stdio(false);
-	vector<string> svec{ "123.0","234.4","4323.2" };
-	double sum = 0.0;
-	for_each(begin(svec), end(svec), [&sum](string& i) {sum += stod(i); });
-	cout << sum;
 	return 0;
 }
