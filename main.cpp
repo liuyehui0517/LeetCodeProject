@@ -3,6 +3,7 @@
 #include <vector>
 using namespace std;
 
+#ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib> 
 #include <crtdbg.h>
@@ -10,6 +11,7 @@ using namespace std;
 	#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 #else
 	#define DBG_NEW new
+#endif
 #endif
 
 #ifdef __GNUC__
@@ -19,7 +21,9 @@ using namespace std;
 
 int main()
 {
+	#ifdef _MSC_VER
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	#endif
 	cin.sync_with_stdio(false);
 	cout.sync_with_stdio(false);
 	return 0;
