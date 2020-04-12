@@ -1,11 +1,23 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <algorithm>
+#include <queue>
+#include <list>
+#include <forward_list>
+#include <stack>
 
-using namespace std;
 #if (defined _MSC_VER) && (defined _DEBUG)
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib> 
 #include <crtdbg.h>
+#endif
+
+#ifdef __cpp_lib_experimental_propagate_const
+#include <propagate_const>
+#else
+#include "propagate_const.h"
+using std::experimental::propagate_const;
 #endif
 
 int main()
@@ -16,6 +28,6 @@ int main()
 #else
 #define DBG_NEW new
 #endif
-	ios::sync_with_stdio(false);
+	
 	return 0;
 }
