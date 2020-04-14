@@ -8,7 +8,7 @@
 #include <forward_list>
 #include <stack>
 #include "Sort.h"
-#include "Node.h"
+
 using namespace std;
 #if (defined _MSC_VER) && (defined _DEBUG)
 #define _CRTDBG_MAP_ALLOC
@@ -42,13 +42,6 @@ int main()
 #else
 #define DBG_NEW new
 #endif
-    Node n;
-    cout << n;
-
-    /*
-	vector<int> ivec{ 12, 11, 2,3,4,5,6,7,8,9 };
-    Sort::QuickSort(begin(ivec), end(ivec),std::less<int>());
-	for (auto i : ivec) cout << i << " ";
-    */
+    
 	return 0;
 }

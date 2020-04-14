@@ -69,7 +69,7 @@ public:
 
 	template<typename ForwardIt, typename UnaryOp>
 	static void QuickSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
-		if (e - b <= 4) {
+		if (e - b <= 8) {
 			InsertSort(b, e, std::forward<UnaryOp>(unaryOp));
 			return;
 		}
@@ -79,17 +79,32 @@ public:
 	}
 	
 	template <class ForwardIt, typename UnaryOp>
-	static void QuickSort_3way(ForwardIt first, ForwardIt last, const UnaryOp& unaryOp)
+	static void Quick3Way(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp)
 	{
-		if (first == last) return;
-		auto pivot = first + ((last - first) >> 1);
-		ForwardIt middle1 = std::partition(first, last,
-			[&pivot, &unaryOp](const auto& em) { return unaryOp(em, *pivot); });
-		ForwardIt middle2 = std::partition(middle1, last,
-			[&pivot, &unaryOp](const auto& em) { return !unaryOp(*pivot, em); });
-		QuickSort_3way(first, middle1, unaryOp);
-		QuickSort_3way(middle2, last, unaryOp);
+		if (e - b <= 1) return;
+		auto pivot = b + ((e - b) >> 1);
+		using _Ty = typename ForwardIt::value_type;
+		ForwardIt L = seek_partition(b, e,
+			[&pivot, &unaryOp](const _Ty& em) { return unaryOp(em, *pivot); });
+		ForwardIt R = seek_partition(L, e,
+			[&pivot, &unaryOp](const _Ty& em) { return !unaryOp(*pivot, em); });
+		Quick3Way(b, L, std::forward<UnaryOp>(unaryOp));
+		Quick3Way(R, e, std::forward<UnaryOp>(unaryOp));
 	}
+
+	template <class ForwardIt, typename UnaryOp>
+	static void QuickSort_STL(ForwardIt b, ForwardIt e, UnaryOp&& unaryOp)
+	{
+		if (b - e <= 1) return;
+		auto pivot = b + ((e - b) >> 1);
+		ForwardIt middle1 = std::partition(b, e,
+			[&pivot, &unaryOp](const auto& em) { return unaryOp(em, *pivot); });
+		ForwardIt middle2 = std::partition(middle1, e,
+			[&pivot, &unaryOp](const auto& em) { return !unaryOp(*pivot, em); });
+		QuickSort_STL(b, middle1, unaryOp);
+		QuickSort_STL(middle2, e, unaryOp);
+	}
+
 private:
 	template<typename ForwardIt, typename UnaryOp>
 	[[noreturn]]
@@ -151,6 +166,26 @@ private:
 		}
 		iter_swap(b, hi);
 		return hi;
+	}
+
+	template<typename ForwardIt, typename UnaryOp>
+#ifdef _HAS_NODISCARD
+#if _HAS_NODISCARD == 1
+	_NODISCARD
+#endif
+#endif
+	static decltype(auto) seek_partition(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
+		auto L = b;
+		for (; L != e; ++L) { // skip in-place elements at beginning
+			if (!unaryOp(*L)) break;
+		}
+		for (auto R = L; R != e; ++R) {
+			if (unaryOp(*R)) {
+				iter_swap(L, R); // out of place, swap and loop
+				++L;
+			}
+		}
+		return L;
 	}
 };
 

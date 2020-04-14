@@ -6,7 +6,7 @@ Node::Node() noexcept :
 {}
 
 Node::Node(Node&& node) noexcept:
-	next(node.getNext()),
+	next(std::move(node.next)),
 	pImpl(node.getValue())
 {}
 
@@ -16,27 +16,23 @@ Node::~Node() noexcept {
 class Node::impl {
 public:
 	impl() noexcept :
-		value("DEAFULT") {
+		stringValue("DEAFULT"), 
+		indexValue(0) {
 	}
 	impl(const impl& imp) noexcept :
-		value(imp.value) {
-	}
-	explicit impl(const std::string& s) noexcept :
-		value(s) {
+		stringValue(imp.stringValue),
+		indexValue(imp.indexValue){
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const impl& imp) {
-		os << imp.value;
+		os << imp.stringValue << '|' << imp.indexValue;
 		return os;
 	}
 private:
-	std::string value;
+	std::string stringValue;
+	int indexValue;
 };
 
-std::unique_ptr<Node>&& Node::getNext() noexcept
-{
-	return std::move(next);
-}
 
 std::experimental::propagate_const
 <std::unique_ptr<Node::impl>>&& 

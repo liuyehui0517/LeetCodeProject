@@ -12,7 +12,7 @@ using std::experimental::propagate_const;
 class Node
 {
 public:
-	class impl;
+	class impl;	
 	friend std::ostream& operator<<(std::ostream& os, const Node& node);
 	
 	Node() noexcept;
@@ -20,11 +20,12 @@ public:
 	Node(Node&& node) noexcept;
 
 	~Node() noexcept;
-	std::unique_ptr<Node>&& getNext() noexcept;
+
 	std::experimental::propagate_const<std::unique_ptr<impl>>&& 
 		getValue() noexcept;
+	
+	std::unique_ptr<Node> next;
 private:
 	std::experimental::propagate_const<std::unique_ptr<impl>> pImpl;
-	std::unique_ptr<Node> next;
 };
 
