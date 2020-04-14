@@ -2,8 +2,8 @@
 class Sort
 {
 public:
-	template<typename Iter, typename UnaryOp>
-	static void SelectSort(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
+	template<typename ForwardIt, typename UnaryOp>
+	static void SelectSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
 		using std::min_element;
 		using std::iter_swap;
 		if (e - b <= 1) return;
@@ -11,21 +11,21 @@ public:
 			iter_swap(tmp, min_element(tmp, e, std::forward<UnaryOp>(unaryOp)));
 	}
 
-	template<typename Iter, typename UnaryOp>
-	static void InsertSort(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
+	template<typename ForwardIt, typename UnaryOp>
+	static void InsertSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
 		using std::min_element;
 		using std::iter_swap;
 		if (e - b <= 1) return;
 		iter_swap(b, min_element(b, e, std::forward<UnaryOp>(unaryOp)));
 		for (auto&& tmp = next(b); tmp != e; ++tmp)
-			for (auto&& l = std::forward<Iter>(tmp); ; --l) {
+			for (auto&& l = std::forward<ForwardIt>(tmp); ; --l) {
 				if (!unaryOp(*l, *prev(l))) break;
 				else iter_swap(l, prev(l));
 			}
 	}
 
-	template<typename Iter, typename UnaryOp>
-	static void ShellSort(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
+	template<typename ForwardIt, typename UnaryOp>
+	static void ShellSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
 		using std::min_element;
 		using std::iter_swap;
 		if (e - b <= 1) return;
@@ -44,8 +44,8 @@ public:
 		}
 	}
 	
-	template<typename Iter, typename UnaryOp>
-	static void MergeSort(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
+	template<typename ForwardIt, typename UnaryOp>
+	static void MergeSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
 		if (e - b <= 1) return;
 		const auto& mid = b + ((e - b) >> 1);
 		MergeSort(b, mid, std::forward<UnaryOp>(unaryOp));
@@ -53,8 +53,8 @@ public:
 		innerMerge(b, mid, e, std::forward<UnaryOp>(unaryOp));
 	}
 
-	template<typename Iter, typename UnaryOp>
-	static void HeapSort(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
+	template<typename ForwardIt, typename UnaryOp>
+	static void HeapSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
 		if (e - b <= 1) return;
 		auto N = e - b;
 		for (auto mid = (N >> 1) - 1; mid >= 0; --mid) {
@@ -67,8 +67,8 @@ public:
 		}
 	}
 
-	template<typename Iter, typename UnaryOp>
-	static void QuickSort(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
+	template<typename ForwardIt, typename UnaryOp>
+	static void QuickSort(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
 		if (e - b <= 4) {
 			InsertSort(b, e, std::forward<UnaryOp>(unaryOp));
 			return;
@@ -77,11 +77,25 @@ public:
 		QuickSort(b, mid,std::forward<UnaryOp>(unaryOp));
 		QuickSort(next(mid), e,std::forward<UnaryOp>(unaryOp));
 	}
+	
+	template <class ForwardIt, typename UnaryOp>
+	static void QuickSort_3way(ForwardIt first, ForwardIt last, const UnaryOp& unaryOp)
+	{
+		if (first == last) return;
+		auto pivot = first + ((last - first) >> 1);
+		ForwardIt middle1 = std::partition(first, last,
+			[&pivot, &unaryOp](const auto& em) { return unaryOp(em, *pivot); });
+		ForwardIt middle2 = std::partition(middle1, last,
+			[&pivot, &unaryOp](const auto& em) { return !unaryOp(*pivot, em); });
+		QuickSort_3way(first, middle1, unaryOp);
+		QuickSort_3way(middle2, last, unaryOp);
+	}
 private:
-	template<typename Iter, typename UnaryOp>
-	static void innerMerge(const Iter& b, const Iter& mid, const Iter& e, 
+	template<typename ForwardIt, typename UnaryOp>
+	[[noreturn]]
+	static void innerMerge(const ForwardIt& b, const ForwardIt& mid, const ForwardIt& e, 
 		UnaryOp&& unaryOp) {
-		using _Ty = typename Iter::value_type;
+		using _Ty = typename ForwardIt::value_type;
 		std::vector<_Ty> result;
 		auto insertResult = std::back_inserter(result);
 		auto l1 = b, l2 = mid, r1 = mid, r2 = e;
@@ -104,10 +118,11 @@ private:
 		std::move(begin(result), end(result), tmp);
 	}
 
-	template<typename Iter, typename UnaryOp>
-	static void heapSink(typename Iter::difference_type offset,
-		const Iter& b,
-		const typename Iter::difference_type N,
+	template<typename ForwardIt, typename UnaryOp>
+	[[noreturn]]
+	static void heapSink(typename ForwardIt::difference_type offset,
+		const ForwardIt& b,
+		const typename ForwardIt::difference_type N,
 		UnaryOp&& unaryOp) {
 		while ((offset << 1) < N - 1) {
 			auto sonOffset = (offset << 1) +1;
@@ -120,9 +135,14 @@ private:
 		}
 	}
 
-	template<typename Iter, typename UnaryOp>
-	static decltype(auto) getPartition(const Iter& b, const Iter& e, UnaryOp&& unaryOp) {
-		Iter lo = b, hi = e;
+	template<typename ForwardIt, typename UnaryOp>
+#ifdef _HAS_NODISCARD
+#if _HAS_NODISCARD == 1
+	_NODISCARD
+#endif
+#endif
+	static decltype(auto) getPartition(const ForwardIt& b, const ForwardIt& e, UnaryOp&& unaryOp) {
+		ForwardIt lo = b, hi = e;
 		while (true) {
 			while (unaryOp(*++lo, *b)) if (lo == prev(e)) break;
 			while (unaryOp(*b, *--hi)) if (hi == b) break;
