@@ -1,13 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <random>
-#include <algorithm>
-#include <queue>
-#include <list>
-#include <forward_list>
-#include <stack>
-#include "Sort.h"
+#include "Tree.h"
 
 using namespace std;
 #if (defined _MSC_VER) && (defined _DEBUG)
@@ -16,24 +10,6 @@ using namespace std;
 #include <crtdbg.h>
 #endif
 
-#ifdef __cpp_lib_experimental_propagate_const
-#include <propagate_const>
-#else
-#include "propagate_const.h"
-using std::experimental::propagate_const;
-#endif
-template <class ForwardIt>
-void quicksort(ForwardIt first, ForwardIt last)
-{
-    if (first == last) return;
-    auto pivot = *std::next(first, std::distance(first, last) >> 1);
-    ForwardIt middle1 = std::partition(first, last,
-        [&pivot](const auto& em) { return em < pivot; });
-    ForwardIt middle2 = std::partition(middle1, last,
-        [&pivot](const auto& em) { return !(pivot < em); });
-    quicksort(first, middle1);
-    quicksort(middle2, last);
-}
 int main()
 {
 #if (defined _MSC_VER) && (defined _DEBUG) 
@@ -42,6 +18,8 @@ int main()
 #else
 #define DBG_NEW new
 #endif
-    
+	using tree::BSTree;
+	BSTree root(3);
+	cout << root.size() << root.height();
 	return 0;
 }
