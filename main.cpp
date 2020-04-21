@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Tree.h"
+
 
 using namespace std;
 #if (defined _MSC_VER) && (defined _DEBUG)
@@ -10,6 +10,7 @@ using namespace std;
 #include <crtdbg.h>
 #endif
 
+
 int main()
 {
 #if (defined _MSC_VER) && (defined _DEBUG) 
@@ -17,9 +18,7 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #else
 #define DBG_NEW new
-#endif
-	using tree::BSTree;
-	BSTree root(3);
-	cout << root.size() << root.height();
+#endif // _MSC_VER && _DEBUG
+
 	return 0;
 }
