@@ -1,7 +1,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Tree.h"
+#include <sstream>
+#include <numeric>
+#include <algorithm>
+#include <unordered_set>
+#include <random>
+#include <iomanip>
+
 using namespace std;
 #if (defined _MSC_VER) && (defined _DEBUG)
 #define _CRTDBG_MAP_ALLOC
@@ -17,11 +23,6 @@ int main()
 #else
 #define DBG_NEW new
 #endif // defined (_MSC_VER && _DEBUG)
-	tree::RBTree root(0, "ZERO");
-	root.set(1, "ONE");
-	root.set(3, "ONE");
-	root.set(4, "ONE");
-	root.set(2, "ONE");
-	root.set(-1, "ONE");
+
 	return 0;
 }

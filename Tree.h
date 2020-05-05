@@ -47,18 +47,18 @@ namespace tree {
 		void set(int index, const std::string& s);
 	}; // class normalNode
 
-	class RBNode : public basicNode {
+	class LLRBNode : public basicNode {
 	public:
-		friend class RBTree;
+		friend class LLRBTree;
 
-		RBNode() = delete;
-		RBNode(int index, const std::string& s, const COLOR& color);
+		LLRBNode() = delete;
+		LLRBNode(int index, const std::string& s, const COLOR& color);
 
 		inline std::string& getValue() override { return value; }
 		inline int getIndex() const override { return index; }
 
-		std::unique_ptr<RBNode> leftNode;
-		std::unique_ptr<RBNode> rightNode;
+		std::unique_ptr<LLRBNode> leftNode;
+		std::unique_ptr<LLRBNode> rightNode;
 	private:
 		COLOR color;
 		void flipColor();
@@ -66,7 +66,11 @@ namespace tree {
 		size_t height() const override;
 		bool contains(int index) const override;
 		std::string& get(int index) override;
-	}; //class RBNode
+	}; //class LLRBNode
+
+	class BNode : public basicNode {
+
+	}; // class BNode
 
 	class basicTree {
 	protected:
@@ -93,10 +97,10 @@ namespace tree {
 		std::unique_ptr<normalNode> root;
 	}; // class BSTree
 
-	class RBTree : public basicTree{
+	class LLRBTree : public basicTree{
 	public:
-		RBTree() = delete;
-		explicit RBTree(int index, const std::string& s);
+		LLRBTree() = delete;
+		explicit LLRBTree(int index, const std::string& s);
 		inline size_t size() const override { return root->size(); }
 		inline size_t height() const override  { return root->height(); }
 		inline bool contains(int index) const override { return root->contains(index); }
@@ -104,15 +108,20 @@ namespace tree {
 		inline void set(int index, const std::string& s) override
 		{ 
 			root = set(root, index, s); 
+			// root must be BLACK ALWAYS
 			root->color = COLOR::BLACK; 
 		}
 	private:
-		std::unique_ptr<RBNode>&& set
-		(std::unique_ptr<RBNode>& node, int index, const std::string& s);
+		std::unique_ptr<LLRBNode>&& set
+		(std::unique_ptr<LLRBNode>& node, int index, const std::string& s);
 
-		static bool isRed(const std::unique_ptr<RBNode>& node);
-		static void rotateLeft(std::unique_ptr<RBNode>& node);
-		static void rotateRight(std::unique_ptr<RBNode>& node);
-		std::unique_ptr<RBNode> root;
-	}; // class RBTree
+		static bool isRed(const std::unique_ptr<LLRBNode>& node);
+		static void rotateLeft(std::unique_ptr<LLRBNode>& node);
+		static void rotateRight(std::unique_ptr<LLRBNode>& node);
+		std::unique_ptr<LLRBNode> root;
+	}; // class LLRBTree
+
+	class BTree :public basicTree {
+
+	}; // class BTree
 } // namespace tree
